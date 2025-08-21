@@ -1,196 +1,45 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8" />
-    <title>BỆNH VIỆN THẨM MỸ EMCAS - TƯ VẤN LÀM ĐẸP - GIẢM CÂN 24/2424 ĐT: 0979 223 636</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 20px; /* tăng kích thước chữ */
-            background: #fffbe6;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-        header {
-            text-align: center;
-            background: #002147;
-            color: #ffd700;
-            padding: 20px 10px;
-            border-radius: 8px;
-        }
-        img.logo {
-            max-width: 120px;
-            border-radius: 50%;
-        }
-        h1 {
-            margin: 10px 0 0 0;
-            font-size: 32px; /* tăng từ 24px */
-        }
-        form {
-            max-width: 500px;
-            margin: 20px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 18px;
-        }
-        button {
-            background: #ffd700;
-            color: #002147;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 20px; /* tăng cỡ chữ nút */
-        }
-        #result {
-            margin-top: 20px;
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-        }
-        #zalo-call {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #25d366;
-            color: white;
-            padding: 12px 16px;
-            border-radius: 50%;
-            text-decoration: none;
-            font-size: 24px;
-        }
-        .meal-img {
-            width: 100%;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <img src="logo_emcas.png" alt="EMCAS Logo" class="logo" /><br>
-        <h1>BỆNH VIỆN THẨM MỸ EMCAS</h1>
-        <p>ĐT: 0979 223 636</p>
-    </header>
+import cv2
+import numpy as np
 
-    <form id="calc-form">
-        <label>Giới tính:</label>
-        <select id="gender"><option value="Nam">Nam</option><option value="Nữ">Nữ</option></select>
-        <label>Tuổi:</label>
-        <input type="number" id="age" value="30" />
-        <label>Cân nặng (kg):</label>
-        <input type="number" id="weight" value="68" />
-        <label>Chiều cao (cm):</label>
-        <input type="number" id="height" value="170" />
-        <label>Mức độ vận động:</label>
-        <select id="activity">
-            <option value="1.2">Ít hoặc không vận động</option>
-            <option value="1.375">Vận động nhẹ</option>
-            <option value="1.55">Vận động vừa</option>
-            <option value="1.725">Vận động nhiều</option>
-            <option value="1.9">Vận động rất nhiều</option>
-        </select>
-        <button type="button" onclick="calculate()">Tính Kcal & BMI</button>
-        <div id="result"></div>
-    </form>
+# Đọc ảnh
+image = cv2.imread("aefec5fd-7f4f-419b-8028-ef4d292a675a.png")
+if image is None:
+    raise FileNotFoundError("Không tìm thấy ảnh. Hãy chắc chắn rằng file nằm cùng thư mục với code.")
 
-    <a id="zalo-call" href="https://zalo.me/0979223636" target="_blank">Zalo</a>
+# Chuyển sang grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    <script>
-function calculate() {
-    const gender = document.getElementById("gender").value;
-    const age = parseFloat(document.getElementById("age").value);
-    const weight = parseFloat(document.getElementById("weight").value);
-    const heightCm = parseFloat(document.getElementById("height").value);
-    const activity = parseFloat(document.getElementById("activity").value);
+# Làm mờ để giảm nhiễu
+blur = cv2.GaussianBlur(gray, (5, 5), 0)
 
-    const height = heightCm / 100;
-    const bmi = weight / (height * height);
+# Phát hiện biên Canny
+edges = cv2.Canny(blur, 50, 150)
 
-    let status = "";
-    if (bmi < 18.5) status = "Bạn đang thiếu cân.";
-    else if (bmi < 24.9) status = "Cân nặng lý tưởng.";
-    else if (bmi < 29.9) status = "Bạn hơi thừa cân.";
-    else status = "Bạn béo phì. Cần giảm cân.";
+# Tìm contours
+contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    const idealWeight = 22 * (height * height);
-    const weightDiff = weight - idealWeight;
-    const weightNote =
-        Math.abs(weightDiff) < 1
-            ? "Bạn đang ở gần mức cân nặng lý tưởng."
-            : weightDiff > 0
-            ? `Bạn nên giảm khoảng ${weightDiff.toFixed(1)} kg để đạt cân nặng lý tưởng.`
-            : `Bạn nên tăng khoảng ${Math.abs(weightDiff).toFixed(1)} kg để đạt cân nặng lý tưởng.`;
+hexagons = []
 
-    let bmr = 0;
-    if (gender === "male") {
-        bmr = 10 * weight + 6.25 * heightCm - 5 * age + 5;
-    } else {
-        bmr = 10 * weight + 6.25 * heightCm - 5 * age - 161;
-    }
+for contour in contours:
+    # Approximate polygon
+    epsilon = 0.02 * cv2.arcLength(contour, True)
+    approx = cv2.approxPolyDP(contour, epsilon, True)
 
-    const tdee = bmr * activity;
-    const carb = (0.5 * tdee) / 4;
-    const protein = (0.25 * tdee) / 4;
-    const fat = (0.25 * tdee) / 9;
+    # Nếu là 6 cạnh → hexagon
+    if len(approx) == 6 and cv2.isContourConvex(approx):
+        hexagons.append(approx)
+        cv2.drawContours(image, [approx], -1, (0, 255, 0), 3)
 
-    let menu = "";
+        # Vẽ tọa độ từng đỉnh
+        for idx, point in enumerate(approx):
+            x, y = point[0]
+            cv2.circle(image, (x, y), 5, (0, 0, 255), -1)
+            cv2.putText(image, f"{idx+1}:({x},{y})", (x+10, y-10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
-    if (tdee < 1800) {
-        menu = `
-        - Ngày 1: Trứng luộc, bánh mì đen, rau luộc, súp yến<br>
-        - Ngày 2: Yến mạch, táo, cá hấp, sữa chua<br>
-        - Ngày 3: Cháo yến mạch, ức gà, bí đỏ, trái cây<br>
-        - Ngày 4: Bún thịt luộc, canh cải, trái cây<br>
-        - Ngày 5: Miến gà, rau trộn, sữa chua<br>
-        - Ngày 6: Cháo cá, rau cải luộc, súp yến<br>
-        - Ngày 7: Trứng hấp, khoai lang, rau xanh, trái cây`;
-    } else if (tdee <= 2400) {
-        menu = `
-        - Ngày 1: Trứng, bánh mì, chuối, ức gà, cá hồi, salad,sữa chua<br>
-        - Ngày 2: Yến mạch, táo, thịt nạc, bí đỏ, miến gà, trái cây<br>
-        - Ngày 3: Trứng, bánh mì, cá thu, tôm, salad xà lách, súp yến<br>
-        - Ngày 4: Bánh mì ốp la, bò xào rau, bún thịt luộc, sữa chua<br>
-        - Ngày 5: Yến mạch, bơ, ức gà xào, cháo cá, trái cây<br>
-        - Ngày 6: Bánh mì, trứng, thịt nạc kho, bún cá, rau hấp<br>
-        - Ngày 7: Phở gà, cá basa, miến xào tôm, súp yến`;
-    } else {
-        menu = `
-        - Ngày 1: Phở bò, trứng ốp la, sinh tố chuối bơ đậu phộng<br>
-        - Ngày 2: Cơm trắng, gà kho, canh bí đỏ, sữa<br>
-        - Ngày 3: Bánh mì kẹp thịt, nước cam, khoai luộc<br>
-        - Ngày 4: Cơm sườn nướng, canh rau ngót, sữa chua<br>
-        - Ngày 5: Xôi gà, trứng, sữa đậu nành<br>
-        - Ngày 6: Mì xào bò, chuối, sữa<br>
-        - Ngày 7: Cơm cá kho, canh chua, rau muống xào`;
-    }
+# Xuất kết quả
+print(f"Tìm thấy {len(hexagons)} hình lục giác.")
 
-    document.getElementById("result").innerHTML =
-        `<h3>Kết quả:</h3>
-        BMI: ${bmi.toFixed(1)} – ${status}<br>${weightNote}<br>
-        BMR: ${bmr.toFixed(2)} kcal/ngày<br>
-        TDEE: ${tdee.toFixed(2)} kcal/ngày<br><br>
-        <b>Chia tỷ lệ dinh dưỡng:</b><br>
-        Carb: ${carb.toFixed(0)}g | Protein: ${protein.toFixed(0)}g | Fat: ${fat.toFixed(0)}g<br><br>
-        <b>Thực đơn mẫu 7 ngày (~${tdee.toFixed(0)} kcal/ngày):</b><br>
-        ${menu}
-        <alt="Giảm mỡ nội tạng bằng thuốc tiêm và Hút mỡ dưới da là giải pháp làm đẹp nhanh & an toàn. 
-              Chúc bạn luôn: vui khỏe - xinh đẹp - mạnh mẽ. 
-              Tập thể dục mỗi ngày để có sức khỏe tốt và tinh thần minh mẫn nhất. 
-              Tư vấn miễn phí Zalo:0979223636">`;
-}
-</script>
-</body>
-</html>
+cv2.imshow("Hexagon Detection", image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
