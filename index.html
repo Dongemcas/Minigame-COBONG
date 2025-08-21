@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mưa tiền - Mini Web EMCAS</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 20% 20%, #e8f8f5, #fef9e7);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+    .card {
+      width: min(92vw, 640px);
+      background: rgba(255,255,255,0.85);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      padding: 28px;
+      text-align: center;
+      backdrop-filter: blur(4px);
+      z-index: 2;
+    }
+    h1 {
+      margin: 0 0 16px;
+      font-size: clamp(22px, 4.5vw, 36px);
+      color: #0e6251;
+    }
+    p.note { margin: 6px 0 18px; color: #5d6d7e; font-size: 14px;}
+    .btns {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 560px) {
+      .btns { grid-template-columns: repeat(3, 1fr); }
+    }
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #1abc9c;
+      color: white;
+      box-shadow: 0 8px 20px rgba(26,188,156,0.3);
+      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    button:hover { filter: brightness(1.05); }
+    button:active { transform: translateY(1px) scale(0.99); }
+    .choice { margin-top: 10px; font-size: 18px; color: #d35400; font-weight: 700; }
+    .bill {
+      position: absolute;
+      width: 120px;
+      will-change: transform, opacity;
+      pointer-events: none;
+      animation: fall var(--dur) linear forwards;
+      transform: translateY(-100px) rotate(var(--rot));
+      left: var(--x);
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-120px) rotate(var(--rot)); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(calc(var(--rot) + 360deg)); opacity: 0.85; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Bạn cần bao nhiêu? 💸</h1>
+    <p class="note">Bấm để nhận mưa tiền vui vẻ nhé!</p>
+    <div class="btns">
+      <button onclick="makeItRain(1)">Tôi cần 1 tỷ</button>
+      <button onclick="makeItRain(5)">Tôi cần 5 tỷ</button>
+      <button onclick="makeItRain(10)">Tôi cần 10 tỷ</button>
+    </div>
+    <div id="choice" class="choice"></div>
+  </div>
+  <script>
+    function makeItRain(amount) {
+      const choiceEl = document.getElementById('choice');
+      choiceEl.textContent = `Bạn đã chọn: ${amount} tỷ 🎉`;
+      const count = amount * 28; // số lượng tiền bay
+      for (let i = 0; i < count; i++) {
+        const img = document.createElement('img');
+        img.src = 'money.png';
+        img.alt = 'money';
+        img.className = 'bill';
+        img.style.setProperty('--x', Math.random() * 100 + 'vw');
+        img.style.setProperty('--rot', Math.floor(Math.random() * 360) + 'deg');
+        img.style.setProperty('--dur', (2 + Math.random() * 2.5) + 's');
+        document.body.appendChild(img);
+        setTimeout(() => img.remove(), 4500);
+      }
+    }
+  </script>
+</body>
+</html>
