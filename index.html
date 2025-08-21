@@ -5,99 +5,138 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mưa tiền - Mini Web EMCAS</title>
   <style>
-    * { box-sizing: border-box; }
     body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(to bottom, #f9f9f9, #e6ffe6);
+      overflow: hidden;
       margin: 0;
       padding: 0;
-      min-height: 100vh;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at 20% 20%, #e8f8f5, #fef9e7);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     }
-    .card {
-      width: min(92vw, 640px);
-      background: rgba(255,255,255,0.85);
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-      padding: 28px;
-      text-align: center;
-      backdrop-filter: blur(4px);
-      z-index: 2;
-    }
-    h1 {
-      margin: 0 0 16px;
-      font-size: clamp(22px, 4.5vw, 36px);
-      color: #0e6251;
-    }
-    p.note { margin: 6px 0 18px; color: #5d6d7e; font-size: 14px;}
-    .btns {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    @media (min-width: 560px) {
-      .btns { grid-template-columns: repeat(3, 1fr); }
-    }
-    button {
-      appearance: none;
-      border: 0;
-      border-radius: 14px;
-      padding: 14px 16px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      background: #1abc9c;
-      color: white;
-      box-shadow: 0 8px 20px rgba(26,188,156,0.3);
-      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease;
-    }
-    button:hover { filter: brightness(1.05); }
-    button:active { transform: translateY(1px) scale(0.99); }
-    .choice { margin-top: 10px; font-size: 18px; color: #d35400; font-weight: 700; }
-    .bill {
+
+    /* Logo góc trái */
+    .logo {
       position: absolute;
-      width: 120px;
-      will-change: transform, opacity;
-      pointer-events: none;
-      animation: fall var(--dur) linear forwards;
-      transform: translateY(-100px) rotate(var(--rot));
-      left: var(--x);
+      top: 10px;
+      left: 10px;
+      width: 80px;
+      height: auto;
     }
+
+    /* Tiêu đề vàng */
+    h1 {
+      font-size: 22px;
+      font-weight: bold;
+      color: #FFD700; /* vàng 24k */
+      margin: 20px 0 10px;
+      padding-top: 10px;
+    }
+
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      display: inline-block;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+      margin-top: 15px;
+    }
+
+    button {
+      display: block;
+      width: 200px;
+      margin: 10px auto;
+      padding: 10px;
+      background: #00c389;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00996b;
+    }
+
+    #result {
+      margin-top: 15px;
+      font-size: 18px;
+      color: darkorange;
+      font-weight: bold;
+    }
+
+    /* Tờ tiền */
+    .money {
+      position: absolute;
+      width: 60px;
+      height: auto;
+      animation: fall linear forwards;
+    }
+
     @keyframes fall {
-      0%   { transform: translateY(-120px) rotate(var(--rot)); opacity: 1; }
-      100% { transform: translateY(110vh) rotate(calc(var(--rot) + 360deg)); opacity: 0.85; }
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(80vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Túi tiền */
+    .money-bag {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+
+    .money-bag img {
+      width: 150px;
+    }
+
+    .money-bag p {
+      margin-top: -15px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Bạn cần bao nhiêu? 💸</h1>
-    <p class="note">Bấm để nhận mưa tiền vui vẻ nhé!</p>
-    <div class="btns">
-      <button onclick="makeItRain(1)">Tôi cần 1 tỷ</button>
-      <button onclick="makeItRain(5)">Tôi cần 5 tỷ</button>
-      <button onclick="makeItRain(10)">Tôi cần 10 tỷ</button>
-    </div>
-    <div id="choice" class="choice"></div>
+  <!-- Logo -->
+  <img src="logo.png" alt="Logo" class="logo">
+
+  <!-- Tiêu đề vàng -->
+  <h1>YẾN SÀO CÔ BÔNG KHÁNH HÒA - CHÚC BẠN LUÔN MAY MẮN</h1>
+
+  <!-- Khung chính -->
+  <div class="container">
+    <h2>Bạn cần bao nhiêu? 💸</h2>
+    <p>Bấm để nhận mưa tiền vui vẻ nhé!</p>
+    <button onclick="makeItRain(1)">Tôi cần 1 tỷ</button>
+    <button onclick="makeItRain(5)">Tôi cần 5 tỷ</button>
+    <button onclick="makeItRain(10)">Tôi cần 10 tỷ</button>
+    <p id="result"></p>
   </div>
+
+  <!-- Túi tiền -->
+  <div class="money-bag">
+    <img src="bag.png" alt="Túi tiền">
+    <p>Túi tiền của bạn - bạn mang về xài</p>
+  </div>
+
   <script>
     function makeItRain(amount) {
-      const choiceEl = document.getElementById('choice');
-      choiceEl.textContent = `Bạn đã chọn: ${amount} tỷ 🎉`;
-      const count = amount * 28; // số lượng tiền bay
-      for (let i = 0; i < count; i++) {
-        const img = document.createElement('img');
-        img.src = 'money.png';
-        img.alt = 'money';
-        img.className = 'bill';
-        img.style.setProperty('--x', Math.random() * 100 + 'vw');
-        img.style.setProperty('--rot', Math.floor(Math.random() * 360) + 'deg');
-        img.style.setProperty('--dur', (2 + Math.random() * 2.5) + 's');
-        document.body.appendChild(img);
-        setTimeout(() => img.remove(), 4500);
+      document.getElementById("result").innerText = "Bạn đã chọn: " + amount + " tỷ 🎉";
+
+      for (let i = 0; i < 15; i++) {
+        let money = document.createElement("img");
+        money.src = "money.png"; // hình tờ tiền
+        money.className = "money";
+        money.style.left = Math.random() * window.innerWidth + "px";
+        money.style.top = "-50px";
+        money.style.animationDuration = (Math.random() * 2 + 2) + "s";
+
+        document.body.appendChild(money);
+
+        setTimeout(() => { money.remove(); }, 4000);
       }
     }
   </script>
