@@ -8,136 +8,116 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background: linear-gradient(to bottom, #f9f9f9, #e6ffe6);
+      background: #f5fff5;
       overflow: hidden;
-      margin: 0;
-      padding: 0;
     }
-
-    /* Logo góc trái */
+    .header {
+      font-size: 22px;
+      font-weight: bold;
+      color: #FFD700;
+      margin: 10px auto;
+      max-width: 80%;
+      line-height: 1.4;
+    }
     .logo {
       position: absolute;
       top: 10px;
       left: 10px;
-      width: 80px;
+      width: 70px;
       height: auto;
     }
-
-    /* Tiêu đề vàng */
-    h1 {
-      font-size: 22px;
-      font-weight: bold;
-      color: #FFD700; /* vàng 24k */
-      margin: 20px 0 10px;
-      padding-top: 10px;
-    }
-
-    .container {
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      display: inline-block;
-      box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-      margin-top: 15px;
-    }
-
-    button {
-      display: block;
-      width: 200px;
-      margin: 10px auto;
-      padding: 10px;
-      background: #00c389;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #00996b;
-    }
-
-    #result {
-      margin-top: 15px;
-      font-size: 18px;
-      color: darkorange;
-      font-weight: bold;
-    }
-
-    /* Tờ tiền */
     .money {
       position: absolute;
       width: 60px;
-      height: auto;
       animation: fall linear forwards;
     }
-
     @keyframes fall {
-      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(80vh) rotate(360deg); opacity: 0; }
+      from { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+      to { transform: translateY(100vh) rotate(360deg); opacity: 0.8; }
     }
-
-    /* Túi tiền */
-    .money-bag {
+    .bag {
+      margin-top: 30px;
+    }
+    .fireworks {
       position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-    }
-
-    .money-bag img {
-      width: 150px;
-    }
-
-    .money-bag p {
-      margin-top: -15px;
-      font-size: 16px;
-      font-weight: bold;
-      color: #333;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <!-- Logo -->
+
   <img src="logo.png" alt="Logo" class="logo">
+  <div class="header">YẾN SÀO CÒ BÔNG KHÁNH HÒA - CHÚC BẠN LUÔN MAY MẮN</div>
 
-  <!-- Tiêu đề vàng -->
-  <h1>YẾN SÀO CÔ BÔNG KHÁNH HÒA - CHÚC BẠN LUÔN MAY MẮN</h1>
+  <h2>Bạn cần bao nhiêu?</h2>
+  <button onclick="makeItRain(1)">Tôi cần 1 tỷ</button>
+  <button onclick="makeItRain(5)">Tôi cần 5 tỷ</button>
+  <button onclick="makeItRain(10)">Tôi cần 10 tỷ</button>
 
-  <!-- Khung chính -->
-  <div class="container">
-    <h2>Bạn cần bao nhiêu? 💸</h2>
-    <p>Bấm để nhận mưa tiền vui vẻ nhé!</p>
-    <button onclick="makeItRain(1)">Tôi cần 1 tỷ</button>
-    <button onclick="makeItRain(5)">Tôi cần 5 tỷ</button>
-    <button onclick="makeItRain(10)">Tôi cần 10 tỷ</button>
-    <p id="result"></p>
+  <div class="bag">
+    <img src="bag.png" width="150">
+    <p><b>ĐÂY LÀ TÚI ĐỰNG TIỀN CỦA BẠN - BẠN MANG VỀ XÀI</b></p>
   </div>
 
-  <!-- Túi tiền -->
-  <div class="money-bag">
-    <img src="bag.png" alt="Túi tiền">
-    <p>Túi tiền của bạn - bạn mang về xài</p>
-  </div>
+  <canvas class="fireworks"></canvas>
+  <audio id="firework-sound" src="firework.mp3"></audio>
 
   <script>
     function makeItRain(amount) {
-      document.getElementById("result").innerText = "Bạn đã chọn: " + amount + " tỷ 🎉";
-
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 30; i++) {   // số lượng tờ tiền nhiều hơn
         let money = document.createElement("img");
-        money.src = "money.png"; // hình tờ tiền
+        money.src = "money.png"; // ảnh tờ tiền
         money.className = "money";
         money.style.left = Math.random() * window.innerWidth + "px";
-        money.style.top = "-50px";
-        money.style.animationDuration = (Math.random() * 2 + 2) + "s";
-
+        money.style.animationDuration = (2 + Math.random() * 3) + "s";
         document.body.appendChild(money);
-
-        setTimeout(() => { money.remove(); }, 4000);
+        setTimeout(() => money.remove(), 5000);
       }
+
+      // hiệu ứng pháo hoa
+      launchFireworks();
+
+      // âm thanh
+      document.getElementById("firework-sound").play();
+    }
+
+    function launchFireworks() {
+      const canvas = document.querySelector(".fireworks");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let particles = [];
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          dx: (Math.random() - 0.5) * 10,
+          dy: (Math.random() - 0.5) * 10,
+          size: 2 + Math.random() * 4,
+          life: 100
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, i) => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = "hsl(" + Math.random() * 360 + ",100%,50%)";
+          ctx.fill();
+          p.x += p.dx;
+          p.y += p.dy;
+          p.life--;
+          if (p.life <= 0) particles.splice(i, 1);
+        });
+        if (particles.length > 0) requestAnimationFrame(animate);
+      }
+      animate();
     }
   </script>
 </body>
