@@ -49,12 +49,14 @@
     }
 
     .logo {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 70px;
-      height: auto;
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+      display: block;
+      margin: 20px auto;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     }
 
     /* TIỀN RƠI */
@@ -66,7 +68,7 @@
       z-index: 1;
     }
     @keyframes fall {
-      from { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+      from { transform: translateY(0px) rotate(0deg); opacity: 1; }
       to { transform: translateY(100vh) rotate(360deg); opacity: 0.85; }
     }
 
@@ -74,7 +76,7 @@
     .options {
       display: flex;
       flex-direction: column;
-      gap: 14px; /* xếp dạng lớp trên xuống */
+      gap: 14px;
       align-items: center;
       margin: 6px auto 18px;
       position: relative;
@@ -97,7 +99,7 @@
       width: 100%;
       padding: 14px 18px;
       border: none;
-      background: transparent; /* nền thuộc card, chữ vàng */
+      background: transparent;
       color: var(--gold);
       font-weight: 800;
       font-size: 20px;
@@ -112,6 +114,7 @@
       margin-top: 8px;
       position: relative;
       z-index: 2;
+      display: none; /* ẩn mặc định */
     }
     .bag p{ color:#043a63; margin: 6px 0 0; font-weight: 800; }
 
@@ -145,7 +148,7 @@
       </div>
     </div>
 
-    <div class="bag">
+    <div class="bag" id="bag">
       <img src="bag.png" width="150" alt="Túi tiền" />
       <p><b>SỨC KHOẺ LÀ VÀNG</b></p>
     </div>
@@ -156,11 +159,16 @@
 
   <script>
     function makeItRain(amount) {
+      const header = document.querySelector(".header");
+      const headerRect = header.getBoundingClientRect();
+      const startY = headerRect.bottom; // bắt đầu rơi từ dưới dòng tiêu đề
+
       for (let i = 0; i < 30; i++) {
         const money = document.createElement("img");
-        money.src = "money.png"; // ảnh tờ tiền
+        money.src = "money.png";
         money.className = "money";
         money.style.left = Math.random() * window.innerWidth + "px";
+        money.style.top = startY + "px";
         money.style.animationDuration = 2 + Math.random() * 3 + "s";
         document.body.appendChild(money);
         setTimeout(() => money.remove(), 5000);
@@ -169,6 +177,9 @@
       launchFireworks();
       const audio = document.getElementById("firework-sound");
       if (audio) { audio.currentTime = 0; audio.play().catch(()=>{}); }
+
+      // hiển thị túi yến khi bấm chọn
+      document.getElementById("bag").style.display = "block";
     }
 
     function launchFireworks() {
@@ -206,7 +217,6 @@
       animate();
     }
 
-    // cập nhật canvas khi đổi kích thước
     window.addEventListener('resize', () => {
       const canvas = document.querySelector('.fireworks');
       if (!canvas) return;
