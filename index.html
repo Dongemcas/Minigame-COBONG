@@ -1,43 +1,120 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>minigame YẾN SÀO CÔ BÔNG</title>
   <style>
+    :root {
+      --sky-1: #87cefa; /* xanh da trời */
+      --sky-2: #cbeaff; /* xanh nhạt  */
+      --gold: #ffd700;  /* vàng 24k */
+      --card-1: rgba(0, 102, 204, 0.25);
+      --card-2: rgba(0, 102, 204, 0.35);
+      --card-3: rgba(0, 102, 204, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background: #f5fff5;
+      margin: 0;
+      background: linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 100%);
+      min-height: 100vh;
       overflow: hidden;
     }
+
+    .container {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 90px 16px 24px;
+    }
+
     .header {
       font-size: 22px;
       font-weight: bold;
-      color: #FFD700;
-      margin: 10px auto;
-      max-width: 80%;
+      color: var(--gold);
+      margin: 10px auto 16px;
+      max-width: 90%;
       line-height: 1.4;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
+
+    .sub {
+      margin: 0 0 12px;
+      color: #043a63;
+      font-weight: 700;
+    }
+
     .logo {
       position: absolute;
       top: 10px;
       left: 10px;
       width: 70px;
       height: auto;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
     }
+
+    /* TIỀN RƠI */
     .money {
       position: absolute;
       width: 60px;
       animation: fall linear forwards;
+      will-change: transform, opacity;
+      z-index: 1;
     }
     @keyframes fall {
       from { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-      to { transform: translateY(100vh) rotate(360deg); opacity: 0.8; }
+      to { transform: translateY(100vh) rotate(360deg); opacity: 0.85; }
     }
+
+    /* 3 KHUNG LỰA CHỌN */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 14px; /* xếp dạng lớp trên xuống */
+      align-items: center;
+      margin: 6px auto 18px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .option-card {
+      width: min(520px, 92%);
+      padding: 10px;
+      border-radius: 18px;
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+    }
+    .option-card:nth-child(1){ background: var(--card-1); }
+    .option-card:nth-child(2){ background: var(--card-2); }
+    .option-card:nth-child(3){ background: var(--card-3); }
+
+    .option-btn {
+      width: 100%;
+      padding: 14px 18px;
+      border: none;
+      background: transparent; /* nền thuộc card, chữ vàng */
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 0 18px rgba(255,215,0,0.5);
+    }
+    .option-card:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,0.22); }
+    .option-btn:active { transform: scale(0.99); }
+
     .bag {
-      margin-top: 30px;
+      margin-top: 8px;
+      position: relative;
+      z-index: 2;
     }
+    .bag p{ color:#043a63; margin: 6px 0 0; font-weight: 800; }
+
     .fireworks {
       position: fixed;
       top: 0;
@@ -45,22 +122,33 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
+      z-index: 3;
     }
   </style>
 </head>
 <body>
+  <img src="logo.png" alt="Logo" class="logo" />
 
-  <img src="logo.png" alt="Logo" class="logo">
-  <div class="header">YẾN SÀO CÔ BÔNG - CHÚC BẠN LUÔN MAY MẮN</div>
+  <div class="container">
+    <div class="header">YẾN SÀO CÔ BÔNG - CHÚC BẠN LUÔN MAY MẮN</div>
+    <h2 class="sub">Bạn cần bao nhiêu?</h2>
 
-  <h2>Bạn cần bao nhiêu?</h2>
-  <button onclick="makeItRain(1)">Tôi cần 1 tỷ</button>
-  <button onclick="makeItRain(5)">Tôi cần 5 tỷ</button>
-  <button onclick="makeItRain(10)">Tôi cần 10 tỷ</button>
+    <div class="options">
+      <div class="option-card">
+        <button class="option-btn" onclick="makeItRain(1)">Tôi cần 1 tỷ</button>
+      </div>
+      <div class="option-card">
+        <button class="option-btn" onclick="makeItRain(5)">Tôi cần 5 tỷ</button>
+      </div>
+      <div class="option-card">
+        <button class="option-btn" onclick="makeItRain(10)">Tôi cần 10 tỷ</button>
+      </div>
+    </div>
 
-  <div class="bag">
-    <img src="bag.png" width="150">
-    <p><b>SỨC KHOẺ LÀ VÀNG</b></p>
+    <div class="bag">
+      <img src="bag.png" width="150" alt="Túi tiền" />
+      <p><b>SỨC KHOẺ LÀ VÀNG</b></p>
+    </div>
   </div>
 
   <canvas class="fireworks"></canvas>
@@ -68,21 +156,19 @@
 
   <script>
     function makeItRain(amount) {
-      for (let i = 0; i < 30; i++) {   // số lượng tờ tiền nhiều hơn
-        let money = document.createElement("img");
-        money.src = "money.png"; // ảnh tờ tiền
+      for (let i = 0; i < 30; i++) {
+        const money = document.createElement("img");
+        money.src = "money.png"; // ảnh tờ tiền
         money.className = "money";
         money.style.left = Math.random() * window.innerWidth + "px";
-        money.style.animationDuration = (2 + Math.random() * 3) + "s";
+        money.style.animationDuration = 2 + Math.random() * 3 + "s";
         document.body.appendChild(money);
         setTimeout(() => money.remove(), 5000);
       }
 
-      // hiệu ứng pháo hoa
       launchFireworks();
-
-      // âm thanh
-      document.getElementById("firework-sound").play();
+      const audio = document.getElementById("firework-sound");
+      if (audio) { audio.currentTime = 0; audio.play().catch(()=>{}); }
     }
 
     function launchFireworks() {
@@ -91,7 +177,7 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
 
-      let particles = [];
+      const particles = [];
       for (let i = 0; i < 80; i++) {
         particles.push({
           x: canvas.width / 2,
@@ -99,7 +185,7 @@
           dx: (Math.random() - 0.5) * 10,
           dy: (Math.random() - 0.5) * 10,
           size: 2 + Math.random() * 4,
-          life: 100
+          life: 100,
         });
       }
 
@@ -108,7 +194,7 @@
         particles.forEach((p, i) => {
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fillStyle = "hsl(" + Math.random() * 360 + ",100%,50%)";
+          ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 50%)`;
           ctx.fill();
           p.x += p.dx;
           p.y += p.dy;
@@ -119,6 +205,14 @@
       }
       animate();
     }
+
+    // cập nhật canvas khi đổi kích thước
+    window.addEventListener('resize', () => {
+      const canvas = document.querySelector('.fireworks');
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
   </script>
 </body>
 </html>
